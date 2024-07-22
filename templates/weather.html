@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоди</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .weather-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 350px;
+        }
+        .weather-container h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .weather-container p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <h1>Прогноз погоди</h1>
+        <form id="weather-form">
+            <div class="form-group">
+                <label for="city">Введіть місто:</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="Наприклад, Харків" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Отримати прогноз</button>
+        </form>
+        <div id="weather-result" style="display: none;">
+            <h2 id="city-name"></h2>
+            <p id="temperature"></p>
+            <p id="description"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('weather-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const city = document.getElementById('city').value;
+            fetch(`/weather?city=${city}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Помилка отримання даних. Спробуйте ще раз.');
+                        return;
+                    }
+                    document.getElementById('weather-result').style.display = 'block';
+                    document.getElementById('city-name').innerText = data.name;
+                    document.getElementById('temperature').innerText = `Температура: ${data.main.temp}°C`;
+                    document.getElementById('description').innerText = `Опис: ${data.weather[0].description}`;
+                })
+                .catch(error => {
+                    console.error('Помилка:', error);
+                    alert('Сталася помилка. Спробуйте ще раз.');
+                });
+        });
+    </script>
+</body>
+</html>
+
+
